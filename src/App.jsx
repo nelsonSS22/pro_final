@@ -1,20 +1,33 @@
-import React, { useState } from 'react';
-import Cards from './components/Cards';
+import React, { useState } from "react";
+import Nav from "./components/Nav";
+import Weathercard from "./components/Weathercard";
+import Ubi from "./components/Ubi";
 
 function App() {
-  const [city, setCity] = useState('');
+  const apiKey = "9cb196b167af58224d44363196cdd805";
   const [weatherData, setWeatherData] = useState(null);
-  const apiKey = '9cb196b167af58224d44363196cdd805';
+  const [searchMethod, setSearchMethod] = useState(null);
+  
 
-  const fetchWeatherData = () => {
+  const clearWeatherData = () => {
+    setWeatherData(null);
+    setSearchMethod(null);
+  };
+
+  const fetchWeatherData = (city) => {
+    clearWeatherData();
+
     if (city) {
-      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
+      fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+      )
         .then((response) => response.json())
         .then((data) => {
           setWeatherData(data);
+          setSearchMethod("city");
         })
         .catch((error) => {
-          console.error('Error fetching weather data:', error);
+          console.error("Error fetching weather data:", error);
         });
     }
   };
@@ -22,27 +35,32 @@ function App() {
   return (
     <div className="App">
       <h1>Weather App</h1>
-      <div>
-        <input
-          type="text"
-          placeholder="Enter city name"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-        />
-        <button onClick={fetchWeatherData}>Get Weather</button>
-      </div>
+      <Nav
+        onSearch={fetchWeatherData}
+        onLocationSearch={() => {
+          clearWeatherData();
+          setSearchMethod("ubi");
+        }}
+      />
+
       {weatherData && (
         <div>
-          <h2>Weather in {weatherData.name}, {weatherData.sys.country}</h2>
-          <Cards
-            temperature={weatherData.main.temp}
-            city={weatherData.name}
-            weather={weatherData.weather[0].description}
-            wind={weatherData.wind.speed}
-            humidity={weatherData.main.humidity}
-            pressure={weatherData.main.pressure}
-            visibility={weatherData.visibility}
-          />
+          <h2>
+            Weather in {weatherData.name}, {weatherData.sys.country}
+          </h2>
+          {searchMethod === "city" ? (
+            <Weathercard
+              temperature={weatherData.main.temp}
+              city={weatherData.name}
+              weather={weatherData.weather[0].description}
+              wind={weatherData.wind.speed}
+              humidity={weatherData.main.humidity}
+              pressure={weatherData.main.pressure}
+              visibility={weatherData.visibility}
+            />
+          ) : searchMethod === "ubi" ? (
+            <Ubi setSearchMethod={setSearchMethod} />
+          ) : null}
         </div>
       )}
     </div>
