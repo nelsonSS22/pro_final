@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Weathercard from "./Weathercard"; 
-import { useWeather } from '../WeatherContext';
+import { useWeather } from '../hooks/WeatherContext';
 
-function Ubi() {
+function Ubi(props) {
   const apiKey = "9cb196b167af58224d44363196cdd805";
   const { weatherData, setWeatherData } = useWeather();
 
@@ -16,7 +16,9 @@ function Ubi() {
           try {
             const response = await fetch(link);
             const data = await response.json();
-            setWeatherData(data); // Actualiza el estado global en lugar de setCurrentWeather
+            setWeatherData(data); 
+
+            props.onLocationSearch();
           } catch (error) {
             console.error("Error fetching weather data:", error);
           }

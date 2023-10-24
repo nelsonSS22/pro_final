@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import Ubi from './Ubi'; // La ruta es relativa al directorio actual
-
+import React, { useState } from "react";
+import Ubi from "./Ubi";
 
 function Nav(props) {
   const [isInputVisible, setInputVisible] = useState(false);
-  const [city, setCity] = useState('');
+  const [city, setCity] = useState("");
 
   const toggleInput = () => {
     setInputVisible(!isInputVisible);
@@ -18,19 +17,24 @@ function Nav(props) {
     props.onSearch(city);
   };
 
+  // Nueva función para buscar pronóstico
+  const searchForecast = () => {
+    props.onLocationSearch();
+  };
+
   return (
     <div className="nav">
+      <Ubi onLocationSearch={searchForecast} />
       <button onClick={toggleInput}>Search for place</button>
       {isInputVisible && (
         <div>
           <input
             type="text"
-            placeholder="Enter city name"
+            placeholder="search location"
             value={city}
             onChange={handleCityChange}
           />
-          <button onClick={searchWeather}>Get Weather</button>
-          <Ubi></Ubi>
+          <button onClick={searchWeather}>Search</button>
         </div>
       )}
     </div>
@@ -38,4 +42,3 @@ function Nav(props) {
 }
 
 export default Nav;
-
