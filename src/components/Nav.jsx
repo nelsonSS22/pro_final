@@ -1,37 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import Ubi from "./Ubi";
 
-function Nav({ onSearchByLocation, onSearchByCity }) {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [city, setCity] = useState('');
+function Nav(props) {
+  const [isInputVisible, setInputVisible] = useState(false);
+  const [city, setCity] = useState("");
 
-  const handleSearchByLocation = () => {
-    // Implementar la lógica para buscar por ubicación aquí
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        // Obtener latitud y longitud desde position.coords.latitude y position.coords.longitude
-        // Luego, puedes utilizar esta información para buscar datos meteorológicos
-      });
-    }
+  const toggleInput = () => {
+    setInputVisible(!isInputVisible);
   };
 
-  const handleSearchByCity = () => {
-    // Implementar la lógica para buscar por nombre de ciudad aquí
-    onSearchByCity(city);
+  const handleCityChange = (e) => {
+    setCity(e.target.value);
+  };
+
+  const searchWeather = () => {
+    props.onSearch(city);
+  };
+
+  // Nueva función para buscar pronóstico
+  const searchForecast = () => {
+    props.onLocationSearch();
   };
 
   return (
     <div className="nav">
-      <button onClick={() => setSearchOpen(!searchOpen)}>Search for place</button>
-      {searchOpen && (
+      <Ubi onLocationSearch={searchForecast} />
+      <button onClick={toggleInput}>Search for place</button>
+      {isInputVisible && (
         <div>
           <input
             type="text"
-            placeholder="Enter city name"
+            placeholder="search location"
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={handleCityChange}
           />
-          <button onClick={handleSearchByCity}>Get Weather</button>
-          <button onClick={handleSearchByLocation}>Use My Location</button>
+          <button onClick={searchWeather}>Search</button>
         </div>
       )}
     </div>
